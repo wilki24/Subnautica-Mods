@@ -1,0 +1,61 @@
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using Logger = QModManager.Utility.Logger;
+
+namespace NoCameraShake_SN
+{
+    [HarmonyPatch(typeof(MainCameraControl))]
+    [HarmonyPatch("UpdateCamShake")]
+    internal class Patch_UpdateCamShake
+    {
+        /*
+            [108 5 - 108 28]
+            IL_0000: call         bool [UnityEngine.VRModule]UnityEngine.XR.XRSettings::get_enabled()
+            IL_0005: brfalse.s    IL_0013
+
+            // [110 7 - 110 27]
+            IL_0007: ldarg.0      // this
+            IL_0008: ldc.r4       0.0
+            IL_000d: stfld        float32 MainCameraControl::camShake
+            IL_0012: ret
+        */
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            MethodInfo xrEnabledMethod = null;
+            try
+            {
+                String name = nameof(UnityEngine.XR.XRSettings.enabled);
+                PropertyInfo property = typeof(UnityEngine.XR.XRSettings).GetProperty(name);
+                xrEnabledMethod = property.GetGetMethod();
+                if (xrEnabledMethod == null)
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(Logger.Level.Error, "xrEnabledMethod method could not be retrieved!", ex); 
+                throw;
+            }
+
+            foreach (var instruction in instructions)
+            {
+                if (instruction.Calls(xrEnabledMethod))
+                {
+                    CodeInstruction noOp = new CodeInstruction(OpCodes.Nop);
+                    
+                    yield return noOp;
+                    yield return noOp;
+                }
+                yield return instruction;
+            }
+            
+
+        }
+    }
+}
+

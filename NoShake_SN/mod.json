@@ -1,0 +1,9 @@
+﻿{
+  "Id": "NoCameraShakeSN",
+  "DisplayName": "No Camera Shake SN",
+  "Author": "wilki24",
+  "Version": "1.0.0",
+  "Enable": true,
+  "AssemblyName": "NoCameraShake_SN.dll",
+  "Game": "Subnautica"
+}

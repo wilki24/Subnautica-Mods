@@ -1,9 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
-using Logger = QModManager.Utility.Logger;
 
 namespace NoCameraShake_SN
 {
@@ -28,7 +26,7 @@ namespace NoCameraShake_SN
                 if (instruction.opcode == OpCodes.Ldc_R4 && instruction.operand.ToString() == "5")
                 {
                     instruction.operand = 0.0f;
-                    Logger.Log(Logger.Level.Info, "Max shake is now: 0");
+                    Console.WriteLine("Max shake is now: 0");
                 }
                 yield return instruction;
             }

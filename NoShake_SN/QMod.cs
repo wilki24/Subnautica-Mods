@@ -1,25 +1,29 @@
 ﻿using System.Reflection;
 using HarmonyLib;
-using HarmonyLib.Tools;
-using QModManager.API.ModLoading;
-using Logger = QModManager.Utility.Logger;
-
+using BepInEx;
+using System;
 
 namespace NoCameraShake_SN
 {
-    [QModCore]
-    public class QMod
+    [BepInPlugin(GUID, MODNAME, VERSION)]
+    public class Plugin : BaseUnityPlugin
     {
-        [QModPatch]
-        public static void Patch()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var modName = ($"wilki24_{assembly.GetName().Name}");
-            Logger.Log(Logger.Level.Info, $"Patching {modName}");
-            Harmony harmony = new Harmony(modName);
-            harmony.PatchAll(assembly);
-            Logger.Log(Logger.Level.Info, "Patched successfully!");
-        }
+        #region[Declarations]
+        private const string
+            MODNAME = "NoCameraShake",
+            AUTHOR = "wilki24",
+            GUID = "com.wilki24.NoCameraShake",
+            VERSION = "1.0.0.0";
+        #endregion
 
+        public void Awake()
+        {
+            Console.WriteLine("NoCameraShake - Started patching v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+
+            var harmony = new Harmony(GUID);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            Console.WriteLine("NoCameraShake - Finished patching");
+        }
     }
 }
